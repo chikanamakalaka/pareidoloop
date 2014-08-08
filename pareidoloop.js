@@ -9,7 +9,7 @@ var Pareidoloop = new function() {
     var outputCallback;
 
     var settings = {
-       CANVAS_SIZE : 130,
+       CANVAS_SIZE : 50,
        OUTPUT_SIZE : 100,
        INITIAL_POLYS : 60,
        MAX_POLYS : 1000,
