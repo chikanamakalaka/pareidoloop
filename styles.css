@@ -22,6 +22,7 @@
 
 			div#canvases {
 				padding: 0;
+				border-color: #fff;
 			}
 
 			#output img {
