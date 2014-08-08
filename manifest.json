@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "pareidoloopp",
+  "short_name": "Pareidoloop",
+  "description": "Description for Pareidoloop2",
+
+  "version": "1.1.0.0",
+
+  "icons": {
+    "16": "assets/icon_16.png",
+    "128": "assets/icon_128.png"
+  },
+
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  }
+}
