@@ -5,7 +5,7 @@
   <content src="index.html"/>
   <preference name="DisallowOverscroll" value="true"/>
   <preference name="android-minSdkVersion" value="14"/>
-  <icon src="assets/icon128.png"/>
+  <icon src="assets/icon_128.png"/>
   <platform name="android">
     <allow-intent href="market:*"/>
   </platform>
