@@ -1,0 +1,12 @@
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="org.freeshell.mhocker.truedetective" version="1.0.0">
+  <name>pareidoloop</name>
+  <description>Generates random faces</description>
+  <author href="http://mhocker.freeshell.org" email="mhocker@freeshell.org">Matt Hocker</author>
+  <content src="index.html"/>
+  <preference name="DisallowOverscroll" value="true"/>
+  <preference name="android-minSdkVersion" value="14"/>
+  <icon src="icon.png"/>
+  <platform name="android">
+    <allow-intent href="market:*"/>
+  </platform>
+</widget>
