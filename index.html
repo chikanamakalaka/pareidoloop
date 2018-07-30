@@ -1,154 +1,163 @@
 <html>
-	<head>
-		<title>pareidoloop</title>
-		<script type="text/javascript" src="ccv.js"></script>
-		<script type="text/javascript" src="face.js"></script>
-		<script type="text/javascript" src="pareidoloop.js"></script>
-		<link rel="stylesheet" href="styles.css">
-	</head>
-	<body>
-		<h2>pareidoloop</h2>
-		<div id="controls">
-			<div class="input">
-				<input id="input-image-size" type="text" value="150"/>
-				<span class="label">output size</span><span class="tip">(to render finished faces)</span>
-				<div class="clear"></div>
-			</div>
-			<div class="input">
-				<input id="input-target-fitness" type="text" value="27.5"/>
-				<span class="label">target fitness</span><span class="tip">(lower is faster, max 35)</span>
-				<div class="clear"></div>
-			</div>
-			<div class="input">
-				<input id="input-max-gens" type="text" value="6000"/>
-				<span class="label">max generations</span><span class="tip">(cut-off if target not reached)</span>
-				<div class="clear"></div>
-			</div>
-			<div class="input">
-				<button id="input-button" type="button">commence</button>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<div class="hr"></div>
-		<div id="canvases">
-			<div class="gen">
-				<canvas id="canvasB" width="50" height="50"></canvas>
-				<div>
-					<h3>current generation</h3>
-					<span id="scoreB" class="score"></span>
-				</div>
-				<div class="clear"></div>
-			</div>
-			<div class="gen">
-				<canvas id="canvasA" width="50" height="50"></canvas>
-				<div>
-					<h3>fittest generation</h3>
-					<span id="scoreA" class="score"></span>
-				</div>
-				<div class="clear"></div>
-			</div>
-		</div>
-		<div class="hr"></div>
-		<div id="output"></div>
-		<span class="tip"><a href="https://github.com/phl/pareidoloop/blob/master/README.md">about</a> | 
-			<input id="save-checkbox" type="checkbox"/><label for="save-checkbox"><span class="u">autosave images:</span>&nbsp;<span class="y">yes (chrome only)</span><span class="n">no</span></label></span>
-		<script type="text/javascript">
 
-			var inputImageSize = document.getElementById("input-image-size");
-			var inputTargetFitness = document.getElementById("input-target-fitness");
-			var inputMaxGens = document.getElementById("input-max-gens");
-			var running = false;
+<head>
+    <title>pareidoloop</title>
+    <script type="text/javascript" src="ccv.js"></script>
+    <script type="text/javascript" src="face.js"></script>
+    <script type="text/javascript" src="canvas2svg.js"></script>
+    <script type="text/javascript" src="pareidoloop.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
 
-			var inputButton = document.getElementById("input-button");
-			
-			var saveCheckbox = document.getElementById("save-checkbox");
+<body>
+    <h2>pareidoloop</h2>
+    <div id="controls">
+        <div class="input">
+            <input id="input-image-size" type="text" value="150" />
+            <span class="label">output size</span><span class="tip">(to render finished faces)</span>
+            <div class="clear"></div>
+        </div>
+        <div class="input">
+            <input id="input-target-fitness" type="text" value="27.5" />
+            <span class="label">target fitness</span><span class="tip">(lower is faster, max 35)</span>
+            <div class="clear"></div>
+        </div>
+        <div class="input">
+            <input id="input-max-gens" type="text" value="6000" />
+            <span class="label">max generations</span><span class="tip">(cut-off if target not reached)</span>
+            <div class="clear"></div>
+        </div>
+        <div class="input">
+            <button id="input-button" type="button">commence</button>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="hr"></div>
+    <div id="canvases">
+        <div class="gen">
+            <canvas id="canvasB" width="50" height="50"></canvas>
+            <div>
+                <h3>current generation</h3>
+                <span id="scoreB" class="score"></span>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="gen">
+            <canvas id="canvasA" width="50" height="50"></canvas>
+            <div>
+                <h3>fittest generation</h3>
+                <span id="scoreA" class="score"></span>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+    <div class="hr"></div>
+    <div id="output"></div>
+    <span class="tip"><a href="https://github.com/phl/pareidoloop/blob/master/README.md">about</a> 
+			<input id="svg-checkbox" type="checkbox"/><label for="svg-checkbox"><span class="u">output:</span>&nbsp;<span class="y">svg</span><span class="n">png</span></label>
+    <input id="save-checkbox" type="checkbox" />
+    <label for="save-checkbox"><span class="u">autosave images:</span>&nbsp;<span class="y">yes (chrome only)</span><span class="n">no</span></label>
+    </span>
+    <script type="text/javascript">
+    var inputImageSize = document.getElementById("input-image-size");
+    var inputTargetFitness = document.getElementById("input-target-fitness");
+    var inputMaxGens = document.getElementById("input-max-gens");
+    var running = false;
 
-			var output = document.getElementById("output");
+    var inputButton = document.getElementById("input-button");
 
+    var svgCheckbox = document.getElementById("svg-checkbox");
 
-			inputButton.onclick = function() {
+    var saveCheckbox = document.getElementById("save-checkbox");
 
-				if (running) {
-					Pareidoloop.stop();
-					running = false;
-					inputButton.innerHTML = "commence";
-				} else {
-
-					var go = true;
-
-					var imageSize = parseInt(inputImageSize.value);
-					if (isNaN(imageSize) || imageSize < 1) {
-						inputImageSize.style.borderColor = "#f00";
-						go = false;
-					} else {
-						inputImageSize.style.borderColor = "#000";
-					}
-
-					var targetFitness = parseFloat(inputTargetFitness.value);
-					if (isNaN(targetFitness) || targetFitness <= 0 || targetFitness > 35) {
-						inputTargetFitness.style.borderColor = "#f00";
-						go = false;
-					} else {
-						inputTargetFitness.style.borderColor = "#000";
-					}
-
-					var maxGens = parseInt(inputMaxGens.value);
-					if (isNaN(maxGens) || maxGens <= 0) {
-						inputMaxGens.style.borderColor = "#f00";
-						go = false;
-					} else {
-						inputMaxGens.style.borderColor = "#000";
-					}
-
-					if (go) {
-						Pareidoloop.start({outputCallback: renderImage, outputSize: imageSize, confidenceThreshold: targetFitness, maxGenerations: maxGens});
-						inputButton.innerHTML = "cease";
-						running = true;
-					}
-				}
-			}
+    var output = document.getElementById("output");
 
 
-			function renderImage(image) {
+    inputButton.onclick = function() {
 
-				output.appendChild(image);
+        if (running) {
+            Pareidoloop.stop();
+            running = false;
+            inputButton.innerHTML = "commence";
+        } else {
 
-				if (!saveCheckbox.checked) return;
+            var go = true;
 
-				var downloader = document.getElementById('downloader');
-				if (!downloader) {
-					downloader = document.createElement('div');
-					downloader.id = 'downloader';
-					downloader.style.display = 'none';
-				}
-				document.body.appendChild(downloader);
+            var imageSize = parseInt(inputImageSize.value);
+            if (isNaN(imageSize) || imageSize < 1) {
+                inputImageSize.style.borderColor = "#f00";
+                go = false;
+            } else {
+                inputImageSize.style.borderColor = "#000";
+            }
 
-				while (downloader.children.length > 0) {
-					downloader.removeChild(downloader.children[downloader.children.length - 1]);
-				}
+            var targetFitness = parseFloat(inputTargetFitness.value);
+            if (isNaN(targetFitness) || targetFitness <= 0 || targetFitness > 35) {
+                inputTargetFitness.style.borderColor = "#f00";
+                go = false;
+            } else {
+                inputTargetFitness.style.borderColor = "#000";
+            }
 
-				var anchor = document.createElement('a');
-				anchor.href = image.src;
-				anchor.target = "_blank";
-				anchor.download = getDefaultFilename(image); 
-				downloader.appendChild(anchor);
-				anchor.click();
+            var maxGens = parseInt(inputMaxGens.value);
+            if (isNaN(maxGens) || maxGens <= 0) {
+                inputMaxGens.style.borderColor = "#f00";
+                go = false;
+            } else {
+                inputMaxGens.style.borderColor = "#000";
+            }
 
-				document.body.removeChild(downloader);
-			}
+            var outputFormat = svgCheckbox.checked ? "svg" : "png";
 
-			function getDefaultFilename(img) {
-				var hash = 0;
-				var str = img.src;
-				if (!str || str.length == 0) return "face";
-				for (i = 0; i < str.length; i++) {
-					char = str.charCodeAt(i);
-					hash = ((hash<<5)-hash)+char;
-					hash = (hash & hash) >>> 0;
-				}
-				return "face-" + img.width + "x" + img.height + "-" + hash.toString(36) + ".png";
-			}
+            if (go) {
+                Pareidoloop.start({outputCallback: renderImage, outputSize: imageSize, outputFormat: outputFormat, confidenceThreshold: targetFitness, maxGenerations: maxGens});
+                inputButton.innerHTML = "cease";
+                running = true;
+            }
+        }
+    }
 
-		</script>
-	</body>
+
+    function renderImage(image) {
+
+        output.appendChild(image);
+
+        if (!saveCheckbox.checked) return;
+
+        var downloader = document.getElementById('downloader');
+        if (!downloader) {
+            downloader = document.createElement('div');
+            downloader.id = 'downloader';
+            downloader.style.display = 'none';
+        }
+        document.body.appendChild(downloader);
+
+        while (downloader.children.length > 0) {
+            downloader.removeChild(downloader.children[downloader.children.length - 1]);
+        }
+
+        var anchor = document.createElement('a');
+        anchor.href = image.src;
+        anchor.target = "_blank";
+        anchor.download = getDefaultFilename(image);
+        downloader.appendChild(anchor);
+        anchor.click();
+
+        document.body.removeChild(downloader);
+    }
+
+    function getDefaultFilename(img) {
+        var hash = 0;
+        var str = img.src;
+        if (!str || str.length == 0) return "face";
+        for (i = 0; i < str.length; i++) {
+            char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = (hash & hash) >>> 0;
+        }
+        return "face-" + img.width + "x" + img.height + "-" + hash.toString(36) + (svgCheckbox.checked ? ".svg" : ".png");
+    }
+    </script>
+</body>
+
 </html>
