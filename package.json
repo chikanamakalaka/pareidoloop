@@ -1,0 +1,23 @@
+{
+  "name": "pareidoloop",
+  "version": "1.0.0",
+  "description": "A random face generator",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/chikanamakalaka/pareidoloop",
+  "keywords": [
+    "Electron",
+    "generate",
+    "face",
+    "art",
+    "neural",
+    "network"
+  ],
+  "author": "Matt Hocker",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^2.0.0"
+  }
+}
