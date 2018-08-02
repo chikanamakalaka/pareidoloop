@@ -18,6 +18,20 @@
   "author": "Matt Hocker",
   "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^2.0.0"
+    "electron": "^2.0.0",
+    "electron-builder": "^20.26.1"
+  },
+  "build": {
+    "appId": "org.freeshell.mhocker.pareidoloop",
+
+    "mac": {
+      "icon": "build/icon.icns",
+      "category": "public.app-category.entertainment",
+      "copyright": "Copyright © 2018 Matt Hocker"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "legalTrademarks": "Copyright © 2018 Matt Hocker"
+    }
   }
 }
