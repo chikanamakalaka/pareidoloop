@@ -23,15 +23,18 @@
   },
   "build": {
     "appId": "org.freeshell.mhocker.pareidoloop",
+    "copyright": "Copyright © 2018 Matt Hocker",
 
     "mac": {
       "icon": "build/icon.icns",
-      "category": "public.app-category.entertainment",
-      "copyright": "Copyright © 2018 Matt Hocker"
+      "category": "public.app-category.entertainment"
     },
     "win": {
       "icon": "build/icon.ico",
       "legalTrademarks": "Copyright © 2018 Matt Hocker"
+    },
+    "linux": {
+      "category": "Graphics"
     }
   }
 }
